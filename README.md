@@ -2,6 +2,8 @@
 
 
 <b> Do not use it in Production, testnet only. </b>
+<br/>
+<b> We have used https://github.com/Layr-Labs/incredible-squaring-avs as the base for this project, the names of contracts,functions,... are still connected to that, but the functionality is a bridge between ETH and BTC</b>
 
 Transfer Bitcoin between Etherium and Bitcoin networks, trustlessly (still not production ready)
 
@@ -17,6 +19,9 @@ You will also need to [install docker](https://docs.docker.com/get-docker/), and
 ```
 make build-contracts
 ```
+You will need latest node
+```
+
 
 ## Running via make
 
@@ -28,7 +33,7 @@ Start anvil in a separate terminal:
 make start-anvil-chain-with-el-and-avs-deployed
 ```
 
-The above command starts a local anvil chain from a [saved state](./tests/anvil/avs-and-eigenlayer-deployed-anvil-state.json) with eigenlayer and incredible-squaring contracts already deployed (but no operator registered).
+The above command starts a local anvil chain from a [saved state](./tests/anvil/avs-and-eigenlayer-deployed-anvil-state.json) with eigenlayer and GBTC (incredible-squaring) contracts already deployed (but no operator registered).
 
 Start the aggregator:
 
@@ -43,6 +48,13 @@ make start-operator
 ```
 
 > By default, the `start-operator` command will also setup the operator (see `register_operator_on_startup` flag in `config-files/operator.anvil.yaml`). To disable this, set `register_operator_on_startup` to false, and run `make cli-setup-operator` before running `start-operator`.
+
+
+Start the frontend app in the /bridge directory :
+
+```bash
+npm i
+npm start
 
 ## Running via docker compose
 
