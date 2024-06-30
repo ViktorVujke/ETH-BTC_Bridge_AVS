@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware/lib/ds-test" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware/lib/eigenlayer-contracts" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/ds-test" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/forge-std" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/forge-std/lib/ds-test" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/openzeppelin-contracts" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware/lib/eigenlayer-contracts/lib/openzeppelin-contracts-upgradeable" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware/lib/forge-std" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware/lib/openzeppelin-contracts" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/eigenlayer-middleware/lib/openzeppelin-contracts-upgradeable" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/forge-std" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/contracts/lib/forge-std/lib/ds-test" vcs="Git" />
+  </component>
+</project>
