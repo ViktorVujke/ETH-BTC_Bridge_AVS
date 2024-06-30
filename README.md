@@ -20,6 +20,12 @@
 
 [![Watch the video](https://img.youtube.com/vi/gFTNQFNKWZg/0.jpg)](https://youtu.be/gFTNQFNKWZg)
 
+## Bridging Process Overview
+The user deposits the desired amount of BTC to the designated BTC multisig address on the Bitcoin network, controlled by the AVS operators. Upon transmitting the transaction, the user comes to the Gazelle App and inputs the desired ETH Mainnet destination address, the hash of the deposit transaction on the Bitcoin network, and the signature of the ETH destination address signed by the user's BTC private key.
+The operators, using Bitcoin light nodes, will check that the BTC transaction happened and upon reaching consensus, the AVS service will credit the user with the corresponding amount of Gazelle BTC (gBTC) ERC20 token on the ETH Mainnet minus the bridging fees, which are compensation for the operators and restakers.
+When the user wants to burn their gBTC and receive native BTC, the process is similar. First, the user inputs their desired BTC destination address and the amount of gBTC they want to bridge. Upon requesting the bridging, the gBTC is burned and the operators sign the transaction to release the BTC from the multisig. Upon consensus, the aggregated signatures and the transaction are broadcast to the BTC network, releasing the native BTC to the user.
+The balance changes of both the gBTC ERC20 and the native BTC can be observed in the user’s MetaMask wallet and the local BTC network instance used for testing purposes.
+
 
 <b> Do not use it in Production, testnet only. </b>
 <br/>
