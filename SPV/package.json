@@ -5,7 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "bcfg": "^0.2.2",
-    "bcoin": "^2.2.0",
+    "bcoin": "file:bcoin",
     "bcrypto": "^5.5.2",
     "bdb": "^1.6.0",
     "bdns": "^0.1.5",
