@@ -3,7 +3,17 @@
 ## Demo Photos Here are some screenshots demonstrating our application: 
 
 ### Screenshot Gallery 
-![Screenshot 498](demoPhotos/Screenshot%20(498).png) ![Screenshot 499](demoPhotos/Screenshot%20(499).png) ![Screenshot 500](demoPhotos/Screenshot%20(500).png) ![Screenshot 501](demoPhotos/Screenshot%20(501).png) ![Screenshot 502](demoPhotos/Screenshot%20(502).png) ![Screenshot 503](demoPhotos/Screenshot%20(503).png) ![Screenshot 504](demoPhotos/Screenshot%20(504).png) ![Screenshot 505](demoPhotos/Screenshot%20(505).png)
+
+<p align="center">
+  <img src="demoPhotos/Screenshot%20(498).png" alt="Screenshot 498" width="200"/>
+  <img src="demoPhotos/Screenshot%20(499).png" alt="Screenshot 499" width="200"/>
+  <img src="demoPhotos/Screenshot%20(500).png" alt="Screenshot 500" width="200"/>
+  <img src="demoPhotos/Screenshot%20(501).png" alt="Screenshot 501" width="200"/>
+  <img src="demoPhotos/Screenshot%20(502).png" alt="Screenshot 502" width="200"/>
+  <img src="demoPhotos/Screenshot%20(503).png" alt="Screenshot 503" width="200"/>
+  <img src="demoPhotos/Screenshot%20(504).png" alt="Screenshot 504" width="200"/>
+  <img src="demoPhotos/Screenshot%20(505).png" alt="Screenshot 505" width="200"/>
+</p>
 
 
 ### Watch the video
