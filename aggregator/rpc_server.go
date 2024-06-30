@@ -45,6 +45,7 @@ type SignedTaskResponse struct {
 	Task         cstaskmanager.IIncredibleSquaringTaskManagerTask
 	BlsSignature bls.Signature
 	OperatorId   types.OperatorId
+	SignedTx string
 }
 
 // rpc endpoint which is called by operator
@@ -70,11 +71,15 @@ func (agg *Aggregator) ProcessSignedTaskResponse(signedTaskResponse *SignedTaskR
 		for _, quorumNum := range signedTaskResponse.Task.QuorumNumbers {
 			quorumNums = append(quorumNums, sdktypes.QuorumNum(quorumNum))
 		}
+		agg.txSignatures[signedTaskResponse.TaskResponse.ReferenceTaskIndex] = []string{}
 		agg.blsAggregationService.InitializeNewTask(signedTaskResponse.TaskResponse.ReferenceTaskIndex, signedTaskResponse.Task.TaskCreatedBlock, quorumNums, quorumThresholdPercentages, taskTimeToExpiry)
 	} else {
 		// The entry exists and is not empty
 		fmt.Println("The task entry exists and is not empty:", task)
 	}
+
+	// Ovde dodajem u niz
+	agg.txSignatures[signedTaskResponse.TaskResponse.ReferenceTaskIndex] = append(agg.txSignatures[signedTaskResponse.TaskResponse.ReferenceTaskIndex], signedTaskResponse.SignedTx)
 
 	agg.logger.Infof("Received signed task response: %#v", signedTaskResponse)
 	taskIndex := signedTaskResponse.TaskResponse.ReferenceTaskIndex

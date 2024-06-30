@@ -1,0 +1,5 @@
+git clone https://github.com/bcoin-org/bcoin
+cd bcoin
+npm rebuild
+cd ..
+npm install

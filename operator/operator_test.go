@@ -76,6 +76,7 @@ func TestOperator(t *testing.T) {
 				G1Point: bls.NewG1Point(X, Y),
 			},
 			OperatorId: operator.operatorId,
+			SignedTx: ""
 		}
 		mockCtrl := gomock.NewController(t)
 		defer mockCtrl.Finish()

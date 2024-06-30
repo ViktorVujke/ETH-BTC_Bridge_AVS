@@ -26,3 +26,9 @@ logs.txt
 
 # just for example
 id_rsa
+
+SPV/package-lock.json
+SPV/node_modules
+SPV/hello
+SPV/hello-regtest
+SPV/bcoin

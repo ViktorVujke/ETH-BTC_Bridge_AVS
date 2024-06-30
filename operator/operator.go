@@ -1,10 +1,15 @@
 package operator
 
 import (
+    "bytes"
+    "encoding/json"
+	"net/http"
 	"context"
 	"fmt"
 	"math/big"
 	"os"
+
+	"errors"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -331,32 +336,66 @@ func (o *Operator) Start(ctx context.Context) error {
 
 }
 
+type VerifyPaymentResponse struct {
+    Ok     bool  `json:"ok"`
+    Amount int64 `json:"amount"`
+}
+
 // Takes a NewTaskCreatedLog struct as input and returns a TaskResponseHeader struct.
 // The TaskResponseHeader struct is the struct that is signed and sent to the contract as a task response.
 func (o *Operator) ProcessNewMintTaskCreatedLog(newTaskCreatedLog *cstaskmanager.ContractIncredibleSquaringTaskManagerNewMintTaskCreated) *cstaskmanager.IIncredibleSquaringTaskManagerTaskResponse {
-	o.logger.Debug("Received new mint task", "task", newTaskCreatedLog)
-	o.logger.Info("Received new mint task",
+    o.logger.Debug("Received new mint task", "task", newTaskCreatedLog)
+    o.logger.Info("Received new mint task",
+        "btcTxHash", newTaskCreatedLog.Task.BtcTxHash, //hash of the btc transaction
+        "signedMessage", newTaskCreatedLog.Task.SignedMessage, //eth address signed with btc private key that sent the transaction
+        "mintTo", newTaskCreatedLog.Task.MintTo, //eth address plain
+        "taskIndex", newTaskCreatedLog.TaskIndex,
+        "taskCreatedBlock", newTaskCreatedLog.Task.TaskCreatedBlock,
+        "quorumNumbers", newTaskCreatedLog.Task.QuorumNumbers,
+        "QuorumThresholdPercentage", newTaskCreatedLog.Task.QuorumThresholdPercentage,
+    )
 
-		"btcTxHash", newTaskCreatedLog.Task.BtcTxHash, //hash of the btc transaction
-		"signedMessage", newTaskCreatedLog.Task.SignedMessage, //eth address signed with btc private key that sent the transaction
-		"mintTo", newTaskCreatedLog.Task.MintTo, //eth address plain
+    // Prepare the request body
+    requestBody, err := json.Marshal(map[string]string{
+        "txid":               newTaskCreatedLog.Task.BtcTxHash,
+        "eth_address":        newTaskCreatedLog.Task.MintTo.Hex(),
+        "signed_eth_address": newTaskCreatedLog.Task.SignedMessage,
+    })
+    if err != nil {
+        o.logger.Error("Failed to marshal request body", "error", err)
+        return nil
+    }
 
-		"taskIndex", newTaskCreatedLog.TaskIndex,
-		"taskCreatedBlock", newTaskCreatedLog.Task.TaskCreatedBlock,
-		"quorumNumbers", newTaskCreatedLog.Task.QuorumNumbers,
-		"QuorumThresholdPercentage", newTaskCreatedLog.Task.QuorumThresholdPercentage,
-	)
+    // Make the POST request
+    resp, err := http.Post("http://172.21.144.1:48594/verify-payment", "application/json", bytes.NewBuffer(requestBody))
+    if err != nil {
+        o.logger.Error("Failed to make POST request", "error", err)
+        return nil
+    }
+    defer resp.Body.Close()
 
-	//prvo proveravamo da li je signedMessage zapravo mintTo potpisana userovim priv kljucem
-	//ovde ide spv ili electum ili neka light btc node implementacija za proveru transakcije (vadimo dal se desila i amount )
+    // Parse the response
+    var verifyResp VerifyPaymentResponse
+    if err := json.NewDecoder(resp.Body).Decode(&verifyResp); err != nil {
+        o.logger.Error("Failed to decode response", "error", err)
+        return nil
+    }
 
-	taskResponse := &cstaskmanager.IIncredibleSquaringTaskManagerTaskResponse{
-		ReferenceTaskIndex: newTaskCreatedLog.TaskIndex,
-		Amount:             big.NewInt(100000000), //amount koji izvadi iz btc noda
+    // Check the response and handle accordingly
+    if !verifyResp.Ok {
+        o.logger.Warn("Verification failed", "response", verifyResp)
+        return nil
+    }
 
-	}
-	return taskResponse
+    // Create the task response with the verified amount
+    taskResponse := &cstaskmanager.IIncredibleSquaringTaskManagerTaskResponse{
+        ReferenceTaskIndex: newTaskCreatedLog.TaskIndex,
+        Amount:             big.NewInt(verifyResp.Amount), // Use the amount from the response
+    }
+	o.logger.Info("Amount je sada", "amount", verifyResp.Amount)
+    return taskResponse
 }
+
 func (o *Operator) ProcessNewBurnTaskCreatedLog(newTaskCreatedLog *cstaskmanager.ContractIncredibleSquaringTaskManagerNewBurnTaskCreated) *cstaskmanager.IIncredibleSquaringTaskManagerTaskResponse {
 	o.logger.Debug("Received new burn task", "task", newTaskCreatedLog)
 	o.logger.Info("Received new burn task",
@@ -382,6 +421,64 @@ func (o *Operator) ProcessNewBurnTaskCreatedLog(newTaskCreatedLog *cstaskmanager
 func (o *Operator) SignTaskResponse(taskResponse *cstaskmanager.IIncredibleSquaringTaskManagerTaskResponse, task *cstaskmanager.IIncredibleSquaringTaskManagerTask) (*aggregator.SignedTaskResponse, error) {
 	taskResponseHash, err := core.GetMintTaskResponseDigest(taskResponse)
 
+	if(task.BurnAmount.Cmp(big.NewInt(0)) == 1){
+		// Prepare the request body
+		requestBody, err := json.Marshal(map[string]interface{}{
+			"destination_address": task.BtcDestinationAddress,
+			"amount":              task.BurnAmount,
+		})
+		if err != nil {
+			o.logger.Error("Failed to marshal request body", "error", err)
+			return nil, errors.New("Not possible")
+		}
+
+		// Make the POST request
+		resp, err := http.Post("http://172.21.144.1:48594/sign-tx", "application/json", bytes.NewBuffer(requestBody))
+		if err != nil {
+			o.logger.Error("Failed to make POST request", "error", err)
+			return nil, errors.New("Not possible")
+		}
+		defer resp.Body.Close()
+
+		// Decode the response body
+		var signTxResponse struct {
+			Ok       bool   `json:"ok"`
+			SignedTx string `json:"signed_tx"`
+		}
+		err = json.NewDecoder(resp.Body).Decode(&signTxResponse)
+		if err != nil {
+			o.logger.Error("Failed to decode response body", "error", err)
+			return nil, errors.New("Not possible")
+		}
+
+		// Check the response field 'ok'
+		if !signTxResponse.Ok {
+			o.logger.Warn("Response 'ok' is false")
+			return nil, errors.New("Not possible")
+		}
+
+		// Log the signed_tx field
+		o.logger.Info("Signed transaction", "signed_tx", signTxResponse.SignedTx)
+		
+		o.logger.Info("ERR in signing",
+			"taskResponse", taskResponse,
+			"taskResponseHash", taskResponseHash,
+		)
+		if err != nil {
+			o.logger.Error("Error getting task response header hash. skipping task (this is not expected and should be investigated)", "err", err)
+			return nil, err
+		}
+		blsSignature := o.blsKeypair.SignMessage(taskResponseHash)
+		signedTaskResponse := &aggregator.SignedTaskResponse{
+			TaskResponse: *taskResponse,
+			Task:         *task,
+			BlsSignature: *blsSignature,
+			OperatorId:   o.operatorId,
+			SignedTx: signTxResponse.SignedTx,
+		}
+		o.logger.Debug("Signed task response", "signedTaskResponse", signedTaskResponse)
+		return signedTaskResponse, nil
+	}
 	o.logger.Info("ERR in signing",
 		"taskResponse", taskResponse,
 		"taskResponseHash", taskResponseHash,
@@ -396,6 +493,7 @@ func (o *Operator) SignTaskResponse(taskResponse *cstaskmanager.IIncredibleSquar
 		Task:         *task,
 		BlsSignature: *blsSignature,
 		OperatorId:   o.operatorId,
+		SignedTx: "",
 	}
 	o.logger.Debug("Signed task response", "signedTaskResponse", signedTaskResponse)
 	return signedTaskResponse, nil

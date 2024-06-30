@@ -47,7 +47,7 @@ contract IncredibleSquaringTaskManagerTest is BLSMockAVSDeployer {
     function testCreateNewTask() public {
         bytes memory quorumNumbers = new bytes(0);
         cheats.prank(generator, generator);
-        tm.createNewTask("58b82b0b3281257ee1e9c6ea71f87362ecbb82f97a66fea12fe9ceca8c543539","58b82b0b3281257ee1e9c6ea71f87362ecbb82f97a66fea12fe9ceca8c543539",0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266,100,"58b82b0b3281257ee1e9c6ea71f87362ecbb82f97a66fea12fe9ceca8c543539",false,100, quorumNumbers);
+        tm.createNewTask("09b2e17b953bdee321f10116a1c3183520e11e0ed3b768e1ccbb0582cceca02c","20a37b5ca96f35f604f1ba963c862e9b11723559d7017f9b54451f86c769354d925710cecf6f6ecf472af2f68e674b8feea1e9b4b5fb6eaadbe2f62bea9e39a119",0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199,100,"58b82b0b3281257ee1e9c6ea71f87362ecbb82f97a66fea12fe9ceca8c543539",false,100, quorumNumbers);
         assertEq(tm.latestTaskNum(), 1);
     }
 }

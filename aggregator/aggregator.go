@@ -1,6 +1,9 @@
 package aggregator
 
 import (
+    "bytes"
+    "encoding/json"
+	"net/http"
 	"context"
 	gethcommon "github.com/ethereum/go-ethereum/common"
 	"math/big"
@@ -74,6 +77,7 @@ type Aggregator struct {
 	tasks                 map[types.TaskIndex]cstaskmanager.IIncredibleSquaringTaskManagerTask
 	tasksMu               sync.RWMutex
 	taskResponses         map[types.TaskIndex]map[sdktypes.TaskResponseDigest]cstaskmanager.IIncredibleSquaringTaskManagerTaskResponse
+	txSignatures          map[uint32][]string
 	taskResponsesMu       sync.RWMutex
 }
 
@@ -117,6 +121,7 @@ func NewAggregator(c *config.Config) (*Aggregator, error) {
 		blsAggregationService: blsAggregationService,
 		tasks:                 make(map[types.TaskIndex]cstaskmanager.IIncredibleSquaringTaskManagerTask),
 		taskResponses:         make(map[types.TaskIndex]map[sdktypes.TaskResponseDigest]cstaskmanager.IIncredibleSquaringTaskManagerTaskResponse),
+		txSignatures: 		   make(map[uint32][]string),
 	}, nil
 }
 
@@ -157,19 +162,20 @@ func (agg *Aggregator) Start(ctx context.Context) error {
 }
 
 func (agg *Aggregator) sendAggregatedResponseToContract(blsAggServiceResp blsagg.BlsAggregationServiceResponse) {
-	// TODO: check if blsAggServiceResp contains an err
+	// Check if blsAggServiceResp contains an error
 	if blsAggServiceResp.Err != nil {
 		agg.logger.Error("BlsAggregationServiceResponse contains an error", "err", blsAggServiceResp.Err)
-		// panicing to help with debugging (fail fast), but we shouldn't panic if we run this in production
+		// Panic to help with debugging (fail fast), but avoid panicking in production
 		panic(blsAggServiceResp.Err)
 	}
-	nonSignerPubkeys := []cstaskmanager.BN254G1Point{}
-	for _, nonSignerPubkey := range blsAggServiceResp.NonSignersPubkeysG1 {
-		nonSignerPubkeys = append(nonSignerPubkeys, core.ConvertToBN254G1Point(nonSignerPubkey))
+
+	nonSignerPubkeys := make([]cstaskmanager.BN254G1Point, len(blsAggServiceResp.NonSignersPubkeysG1))
+	for i, nonSignerPubkey := range blsAggServiceResp.NonSignersPubkeysG1 {
+		nonSignerPubkeys[i] = core.ConvertToBN254G1Point(nonSignerPubkey)
 	}
-	quorumApks := []cstaskmanager.BN254G1Point{}
-	for _, quorumApk := range blsAggServiceResp.QuorumApksG1 {
-		quorumApks = append(quorumApks, core.ConvertToBN254G1Point(quorumApk))
+	quorumApks := make([]cstaskmanager.BN254G1Point, len(blsAggServiceResp.QuorumApksG1))
+	for i, quorumApk := range blsAggServiceResp.QuorumApksG1 {
+		quorumApks[i] = core.ConvertToBN254G1Point(quorumApk)
 	}
 	nonSignerStakesAndSignature := cstaskmanager.IBLSSignatureCheckerNonSignerStakesAndSignature{
 		NonSignerPubkeys:             nonSignerPubkeys,
@@ -185,18 +191,53 @@ func (agg *Aggregator) sendAggregatedResponseToContract(blsAggServiceResp blsagg
 	agg.logger.Info("Threshold reached. Sending aggregated response onchain.",
 		"taskIndex", blsAggServiceResp.TaskIndex,
 	)
+
+	// Retrieve task and taskResponse
 	agg.tasksMu.RLock()
 	task := agg.tasks[blsAggServiceResp.TaskIndex]
 	agg.tasksMu.RUnlock()
 	agg.taskResponsesMu.RLock()
 	taskResponse := agg.taskResponses[blsAggServiceResp.TaskIndex][blsAggServiceResp.TaskResponseDigest]
 	agg.taskResponsesMu.RUnlock()
-	_, err := agg.avsWriter.SendAggregatedResponse(context.Background(), task, taskResponse, nonSignerStakesAndSignature)
+
+	// Retrieve txSignatures2
+	txSignatures2 := agg.txSignatures[blsAggServiceResp.TaskIndex]
+	agg.logger.Info("Vreme za agregaciju", "txSignatures", txSignatures2)
+
+	// Prepare JSON body for POST request
+	requestBody, err := json.Marshal(map[string]interface{}{
+		"signed_txs": txSignatures2,
+	})
+	if err != nil {
+		agg.logger.Error("Failed to marshal request body", "error", err)
+		return // Skip further execution if marshaling fails
+	}
+
+	// Make POST request to broadcast endpoint
+	resp, err := http.Post("http://172.21.144.1:48594/broadcast", "application/json", bytes.NewBuffer(requestBody))
+	if err != nil {
+		agg.logger.Error("Failed to make POST request to broadcast endpoint", "error", err)
+		return // Skip further execution if POST request fails
+	}
+	defer resp.Body.Close()
+
+	// Log response
+	var responseObj map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&responseObj); err != nil {
+		agg.logger.Error("Failed to decode response body", "error", err)
+		return // Skip further execution if decoding response fails
+	}
+
+	// Log the response
+	agg.logger.Info("Response to broadcast", "object", responseObj)
+
+	// Proceed with the function, skipping errors and logging them
+	_, err = agg.avsWriter.SendAggregatedResponse(context.Background(), task, taskResponse, nonSignerStakesAndSignature)
 	if err != nil {
 		agg.logger.Error("Aggregator failed to respond to task", "err", err)
 	}
-
 }
+
 
 // sendNewTask sends a new task to the task manager contract, and updates the Task dict struct
 // with the information of operators opted into quorum 0 at the block of task creation.

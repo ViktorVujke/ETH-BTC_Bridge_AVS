@@ -74,6 +74,7 @@ func createMockSignedTaskResponse(mockTask MockTask, keypair bls.KeyPair) (*Sign
 		TaskResponse: *taskResponse,
 		BlsSignature: *blsSignature,
 		OperatorId:   MOCK_OPERATOR_ID,
+		SignedTx: ""
 	}
 	return signedTaskResponse, nil
 }

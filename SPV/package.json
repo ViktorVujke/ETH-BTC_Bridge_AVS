@@ -1,0 +1,40 @@
+{
+  "name": "spv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "bcfg": "^0.2.2",
+    "bcoin": "^2.2.0",
+    "bcrypto": "^5.5.2",
+    "bdb": "^1.6.0",
+    "bdns": "^0.1.5",
+    "bevent": "^0.1.6",
+    "bfile": "^0.2.3",
+    "bfilter": "^1.0.5",
+    "binet": "^0.3.9",
+    "bitcoin-core": "^4.2.0",
+    "bitcoinjs-lib": "^6.1.6",
+    "bitcoinjs-message": "^2.2.0",
+    "blgr": "^0.2.1",
+    "blru": "^0.1.7",
+    "blst": "^0.1.6",
+    "bmutex": "^0.1.7",
+    "bsert": "^0.0.13",
+    "bsocks": "^0.2.6",
+    "btcp": "^0.1.5",
+    "buffer-map": "^0.0.7",
+    "bupnp": "^0.2.6",
+    "bval": "^0.1.8",
+    "bweb": "^0.3.0",
+    "ecpair": "^2.1.0",
+    "express": "^4.19.2",
+    "n64": "^0.2.10",
+    "tiny-secp256k1": "^2.2.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
