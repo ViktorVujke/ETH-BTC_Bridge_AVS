@@ -1,0 +1,1 @@
+.\bitcoin-cli.exe -rpcwallet=kutac -generate 10

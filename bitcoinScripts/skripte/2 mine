@@ -1,0 +1,1 @@
+bitcoin-cli -rpcwallet=w1 -regtest -generate 1

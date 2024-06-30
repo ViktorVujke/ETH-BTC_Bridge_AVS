@@ -1,0 +1,24 @@
+createWallet - Kreira nam multisig - rezultat upisuje u multisig.json, odabrati konfiguraciju u 11. redu
+Poslati transakciju, minovati 10 blokova, pokrenuti getUTXO.js
+Kopirati rawTx iz bitcoin cora na placeholder u UTXO.json
+Monitorovati ovaj wallet (Zitomir): mqYT9upmDU7WGVXWk3DKcMxGZCYiMGEhGg
+Pokrenuti testMultisig.js za test id 0 - treba fail (Can not finalize input #0)
+Pokrenuti testMultisig.js za test id 1 - treba succ
+Minovati 10 blokovoa
+Ponovo pozvati getUTXO i kopirati rawTx uspesne transakcije iz testa 1
+Pokrenuti testMultisig.js za test id 2 - treba fail (Too many signatures)
+
+Limit 14
+
+U compile2 mogu da vidim kako se uzima javni kljuc koji ide u skriptu
+
+Zadatak
+
+2000000000000000000000000000000000000000000000000000000000000001
+2000000000000000000000000000000000000000000000000000000000000002
+2000000000000000000000000000000000000000000000000000000000000003
+2000000000000000000000000000000000000000000000000000000000000004
+
+Sad treba 2/4
+
+Prvo probati sa jednim potpisom i videti da ne radi, onda isprobati 3

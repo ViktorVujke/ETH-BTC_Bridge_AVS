@@ -1,0 +1,3 @@
+bitcoin-cli -regtest -rpcwallet=w1 getbalance
+
+bitcoin-cli -regtest listunspent 0 9999999 '["2MzTHHunEeoiqPAsSe7yH2uJFcMW1EhDr9h"]'
