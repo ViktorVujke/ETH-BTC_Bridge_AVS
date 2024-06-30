@@ -3,10 +3,11 @@ import Web3Modal from 'web3modal';
 import { Web3Provider } from '@ethersproject/providers';
 import GbtcBtcModal from './Modals/GbtcBtcModal';
 import BtcGbtcModal from './Modals/BtcGbtcModal';
-import bitcoin from "bitcoinjs-lib"
-import { ECPairFactory } from "ecpair"
-import tinysecp from "tiny-secp256k1"
+import bitcoin from "bitcoinjs-lib";
+import { ECPairFactory } from "ecpair";
+import tinysecp from "tiny-secp256k1";
 import './BridgeForm.css';
+import '../BridgeButton.css'
 import { ethers } from 'ethers';
 
 const BridgeForm = () => {
@@ -25,8 +26,7 @@ const BridgeForm = () => {
   const [signedMessage, setSignedMessage] = useState('0x58a2551789add523319ba3fc996904ad6e9d3115444f9a321b6656cc88aa03dd');
   const [modalType, setModalType] = useState('');
 
-
-  const avsTaskManagerCreateTaskAbi =  [
+  const avsTaskManagerCreateTaskAbi = [
     {
       "inputs": [
         { "internalType": "string", "name": "btcTxHash", "type": "string" },
@@ -43,7 +43,8 @@ const BridgeForm = () => {
       "stateMutability": "nonpayable",
       "type": "function"
     }
-  ]
+  ];
+
   const handleSwap = () => {
     setFromToken(fromToken === 'BTC' ? 'GBTC' : 'BTC');
     setToToken(toToken === 'BTC' ? 'GBTC' : 'BTC');
@@ -74,44 +75,26 @@ const BridgeForm = () => {
     setAccount(newAccount);
     setEthAddress(newAccount); // Set ETH address to MetaMask address by default
   };
-  const privateKey = "6000000000000000000000000000000000000000000000000000000000000001"
 
-  const handleBurn = async (address) => {
+  const privateKey = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+
+  const initiateMintOnAvs = async () => {
     try {
-      // Fetch data from your server
-      const response = await fetch("http://192.168.2.71:8080/releaseBTC", {
-        body: JSON.stringify({
-          destAddress: address,
-          amount: Math.floor(amount * 1000)
-        }),
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!window.ethereum) {
+        throw new Error("MetaMask is not installed");
       }
-  
-      const result = await response.json();
-      console.log(result);
-  
 
-  
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-  const initiateMintOnAvs = async ( ) => {
+      // Set up a provider (MetaMask in this case)
+      const provider = new ethers.BrowserProvider(window.ethereum);
 
-    try {
-      const provider = new ethers.JsonRpcProvider('http://localhost:8545');
-      const walletWithProvider = new ethers.Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', provider);
-      const contractAddress = "0x9E545E3C0baAB3E08CdfD552C960A1050f373042";   
-      const contract = new ethers.Contract(contractAddress, avsTaskManagerCreateTaskAbi, walletWithProvider);
-      
-  
+      // Prompt user to connect their wallet
+      await provider.send("eth_requestAccounts", []);
+
+      // Get the signer
+      const signer = await provider.getSigner();
+      const contractAddress = "0x9E545E3C0baAB3E08CdfD552C960A1050f373042";
+      const contract = new ethers.Contract(contractAddress, avsTaskManagerCreateTaskAbi, signer);
+
       // Convert the amount to a string before parsing it to units
       const amountString = amount.toString();
       // Define the types and values you want to encode
@@ -125,16 +108,24 @@ const BridgeForm = () => {
     }
   };
 
-  const initiateBurnOnAvs = async ( ) => {
-
+  const initiateBurnOnAvs = async () => {
     try {
-      const provider = new ethers.JsonRpcProvider('http://localhost:8545');
-      const walletWithProvider = new ethers.Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', provider);
+      if (!window.ethereum) {
+        throw new Error("MetaMask is not installed");
+      }
+
+      // Set up a provider (MetaMask in this case)
+      const provider = new ethers.BrowserProvider(window.ethereum);
+
+      // Prompt user to connect their wallet
+      await provider.send("eth_requestAccounts", []);
+
+      // Get the signer
+      const signer = await provider.getSigner();
       const contractAddress = "0x9E545E3C0baAB3E08CdfD552C960A1050f373042";
-    
-      const contract = new ethers.Contract(contractAddress, avsTaskManagerCreateTaskAbi, walletWithProvider);
-      
-  
+
+      const contract = new ethers.Contract(contractAddress, avsTaskManagerCreateTaskAbi, signer);
+
       // Convert the amount to a string before parsing it to units
       const amountString = amount.toString();
       // Define the types and values you want to encode
@@ -147,32 +138,37 @@ const BridgeForm = () => {
       console.error('Transaction failed:', error);
     }
   };
+
   return (
-    <div className="bridge-form-container">
+    <div className="bridge-form-container" >
       <div className="bridge-form-header">
         <h2>Send</h2>
         <div className="network-select">
-          <div className="network-pill">
-            <input
-              type="radio"
-              id="btc"
-              name="network"
-              value="BTC"
-              checked={fromToken === 'BTC'}
-              onChange={handleSwap}
-            />
-            <label htmlFor="btc">BTC</label>
-            <input
-              type="radio"
-              id="gbtc"
-              name="network"
-              value="GBTC"
-              checked={fromToken === 'GBTC'}
-              onChange={handleSwap}
-            />
-            <label htmlFor="gbtc">GBTC</label>
-          </div>
-        </div>
+  <div className="network-pill">
+    <input
+      type="radio"
+      id="btc"
+      name="network"
+      value="BTC"
+      checked={fromToken === 'BTC'}
+      onChange={handleSwap}
+      style={{margin:10}}
+    />
+    <label htmlFor="btc">BTC</label>
+    <input
+      type="radio"
+      id="gbtc"
+      name="network"
+      value="GBTC"
+      checked={fromToken === 'GBTC'}
+      onChange={handleSwap}
+      style={{margin:10}}
+
+    />
+    <label htmlFor="gbtc">GBTC</label>
+  </div>
+</div>
+
       </div>
       <form className="bridge-form" onSubmit={handleSubmit}>
         <div className="bridge-section">
@@ -183,7 +179,7 @@ const BridgeForm = () => {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="0.0"
-              className="amount-input"
+              className="amount-input3"
               step="0.01"
             />
             <span className="network-currency">{fromToken}</span>
@@ -193,20 +189,20 @@ const BridgeForm = () => {
         <div className="bridge-section">
           <div className="bridge-section-header">To (estimated)</div>
           <div className="bridge-section-content">
-            <input type="number" placeholder="0.0" className="amount-input" readOnly value={amount *0.997} />
+            <input type="number" placeholder="0.0" className="amount-input3" readOnly value={amount * 0.995} />
             <span className="network-currency">{toToken}</span>
           </div>
         </div>
         <div className="bridge-details">
-         
+          {/* Additional details can be added here */}
         </div>
         {account ? (
           <>
-            <button type="submit" className="connect-wallet-button">Bridge</button>
+            <button type="submit" className="bridge-button">Bridge</button>
             <div className="connected-account" style={{ marginTop: '10px' }}>Wallet: {account}</div>
           </>
         ) : (
-          <button type="button" className="connect-wallet-button" onClick={connectWallet}>Connect A Wallet</button>
+          <button type="button" className="bridge-button" onClick={connectWallet}>Connect A Wallet</button>
         )}
       </form>
       {modalType === 'GbtcBtc' && (
@@ -218,7 +214,7 @@ const BridgeForm = () => {
           btcAddress={btcAddress}
           setBtcAddress={setBtcAddress}
           handleBridge={initiateBurnOnAvs}
-          setAmount = {setAmount}
+          setAmount={setAmount}
         />
       )}
       {modalType === 'BtcGbtc' && (

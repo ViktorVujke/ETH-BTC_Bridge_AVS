@@ -2,10 +2,11 @@ package aggregator
 
 import (
 	"context"
-	gethcommon "github.com/ethereum/go-ethereum/common"
 	"math/big"
 	"sync"
 	"time"
+
+	gethcommon "github.com/ethereum/go-ethereum/common"
 
 	"github.com/Layr-Labs/eigensdk-go/logging"
 
@@ -144,14 +145,14 @@ func (agg *Aggregator) Start(ctx context.Context) error {
 		case blsAggServiceResp := <-agg.blsAggregationService.GetResponseChannel():
 			agg.logger.Info("Received response from blsAggregationService", "blsAggServiceResp", blsAggServiceResp)
 			agg.sendAggregatedResponseToContract(blsAggServiceResp)
-	/*	case <-ticker.C:
-			err := agg.sendNewTask("0x58a2551789add523319ba3fc996904ad6e9d3115444f9a321b6656cc88aa03dd", "58b82b0b3281257ee1e9c6ea71f87362ecbb82f97a66fea12fe9ceca8c543539", gethcommon.HexToAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"))
+			/*	case <-ticker.C:
+				err := agg.sendNewTask("0x58a2551789add523319ba3fc996904ad6e9d3115444f9a321b6656cc88aa03dd", "58b82b0b3281257ee1e9c6ea71f87362ecbb82f97a66fea12fe9ceca8c543539", gethcommon.HexToAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"))
 
-			taskNum++
-			if err != nil {
-				// we log the errors inside sendNewTask() so here we just continue to the next task
-				continue
-			} */
+				taskNum++
+				if err != nil {
+					// we log the errors inside sendNewTask() so here we just continue to the next task
+					continue
+				} */
 		}
 	}
 }

@@ -100,7 +100,6 @@ const Dashboard = () => {
         </p>
       </div>
       <div className="dashboard-swap">
-        <button onClick={()=>{handleMint("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", 100, "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb9226")}}>Test</button>
         
 
         <BridgeForm />
