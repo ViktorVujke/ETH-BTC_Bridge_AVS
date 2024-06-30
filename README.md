@@ -87,7 +87,7 @@ Run the following command to confirm that transaction (from Bitcoin Core daemon 
 bitcoin-cli.exe -rpcwallet=YOUR_WALLET_NAME -generate 10
 ```
 
-Run the `bitcoinScripts/sendMoney.js`. It will fund the hardcoded multisig with 1 BTC, which will give your SPV node (after you set it up) a transaction that you can test. 
+Run the `bitcoinScripts/payment/sendMoney.js` (first run npm i in bitcoinScripts folder). It will fund the hardcoded multisig with 1 BTC, which will give your SPV node (after you set it up) a transaction that you can test. 
 
 #### SPV Node setup
 
