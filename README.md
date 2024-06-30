@@ -1,4 +1,4 @@
-# Gazelle BTC-ETH bridge (IncredibleSquaring name, GBTC logiv)
+# Gazelle BTC-ETH bridge (IncredibleSquaring name, GBTC logic)
 
 
 <b> Do not use it in Production, testnet only. </b>
@@ -85,7 +85,7 @@ The architecture of the AVS contains:
 For this project, both mint and burn tasks are on the IncredibleSquaringTaskManager contract. 
 
 
-1. A task generator publishes tasks from the app  to the IncredibleSquaringTaskManager contract's [createNewTask](contracts/src/IncredibleSquaringTaskManager.sol#L83) function. Each task specifies a bool `isBurnTask` which specifies what should happen next (emit NewMintTaskCreated or lock GBTC and emmit NewBurnTaskCreated). Apart from that it sends both info for burn and mint tasks, only the info of the other is empty. For mint, the contract uses btcTxHash (hash of the compleated btc transaction) , mintTo(addres of the ETH account that you want the GBTC to be mintet to) ,signedMessage (mintTo signed by the users BTC private key, the one that they have sent the transaction with)
+1. A task generator publishes tasks from the app  to the IncredibleSquaringTaskManager contract's [createNewTask](contracts/src/IncredibleSquaringTaskManager.sol#L83) function. Each task specifies a bool `isBurnTask` which specifies what should happen next (emit NewMintTaskCreated or lock GBTC and emmit NewBurnTaskCreated). Apart from that it sends both info for burn and mint tasks, only the info of the other is empty. For mint, the contract uses btcTxHash (hash of the compleated btc transaction) , mintTo(addres of the ETH account that you want the GBTC to be mintet to) ,signedMessage (mintTo signed by the users BTC private key, the one that they have sent the transaction with). For burn tasks, we send the ammount to burn and bitcoin destination address.
 
 2. A [registry](https://github.com/Layr-Labs/eigenlayer-middleware/blob/master/src/BLSRegistryCoordinatorWithIndices.sol) contract is deployed that allows any eigenlayer operator with at least 1 delegated [mockerc20](contracts/src/ERC20Mock.sol) token to opt-in to this AVS and also de-register from this AVS.
 
