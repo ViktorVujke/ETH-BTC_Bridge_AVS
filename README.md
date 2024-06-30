@@ -1,5 +1,13 @@
 # Gazelle BTC-ETH bridge (IncredibleSquaring name, GBTC logic)
 
+## Demo Photos Here are some screenshots demonstrating our application: 
+
+### Screenshot Gallery 
+![Screenshot 498](demoPhotos/Screenshot%20(498).png) ![Screenshot 499](demoPhotos/Screenshot%20(499).png) ![Screenshot 500](demoPhotos/Screenshot%20(500).png) ![Screenshot 501](demoPhotos/Screenshot%20(501).png) ![Screenshot 502](demoPhotos/Screenshot%20(502).png) ![Screenshot 503](demoPhotos/Screenshot%20(503).png) ![Screenshot 504](demoPhotos/Screenshot%20(504).png) ![Screenshot 505](demoPhotos/Screenshot%20(505).png)
+
+
+### Watch the video
+
 [![Watch the video](https://img.youtube.com/vi/gFTNQFNKWZg/0.jpg)](https://youtu.be/gFTNQFNKWZg)
 
 
