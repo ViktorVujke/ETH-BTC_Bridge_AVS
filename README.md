@@ -1,10 +1,11 @@
-# Incredible Squaring AVS
+# Gazelle BTC-ETH bridge (IncredibleSquaring name, GBTC logiv)
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/Layr-Labs/incredible-squaring-avs)](https://goreportcard.com/report/github.com/Layr-Labs/incredible-squaring-avs)
 
 <b> Do not use it in Production, testnet only. </b>
+<br/>
+<b> We have used https://github.com/Layr-Labs/incredible-squaring-avs as the base for this project, the names of contracts,functions,... are still connected to that, but the functionality is a bridge between ETH and BTC</b>
 
-Basic repo demoing a simple AVS middleware with full eigenlayer integration. See this [video walkthrough](https://www.loom.com/share/50314b3ec0f34e2ba386d45724602d76?sid=9d68d8cb-d2d5-4123-bd06-776de2076de0).
+Transfer Bitcoin between Etherium and Bitcoin networks, trustlessly (still not production ready)
 
 ## Dependencies
 
@@ -18,6 +19,9 @@ You will also need to [install docker](https://docs.docker.com/get-docker/), and
 ```
 make build-contracts
 ```
+You will need latest node
+```
+
 
 ## Running via make
 
@@ -29,7 +33,7 @@ Start anvil in a separate terminal:
 make start-anvil-chain-with-el-and-avs-deployed
 ```
 
-The above command starts a local anvil chain from a [saved state](./tests/anvil/avs-and-eigenlayer-deployed-anvil-state.json) with eigenlayer and incredible-squaring contracts already deployed (but no operator registered).
+The above command starts a local anvil chain from a [saved state](./tests/anvil/avs-and-eigenlayer-deployed-anvil-state.json) with eigenlayer and GBTC (incredible-squaring) contracts already deployed (but no operator registered).
 
 Start the aggregator:
 
@@ -45,8 +49,15 @@ make start-operator
 
 > By default, the `start-operator` command will also setup the operator (see `register_operator_on_startup` flag in `config-files/operator.anvil.yaml`). To disable this, set `register_operator_on_startup` to false, and run `make cli-setup-operator` before running `start-operator`.
 
-## Running via docker compose
 
+Start the frontend app in the /bridge directory :
+
+```bash
+npm i
+npm start
+
+## Running via docker compose
+```
 We wrote a [docker-compose.yml](./docker-compose.yml) file to run and test everything on a single machine. It will start an anvil instance, loading a [state](./tests/anvil/avs-and-eigenlayer-deployed-anvil-state.json) where the eigenlayer and incredible-squaring contracts are deployed, start the aggregator, and finally one operator, along with prometheus and grafana servers. The grafana server will be available at http://localhost:3000, with user and password both set to `admin`. We have created a simple [grafana dashboard](./grafana/provisioning/dashboards/AVSs/incredible_squaring.json) which can be used as a starting example and expanded to include AVS specific metrics. The eigen metrics should not be added to this dashboard as they will be exposed on the main eigenlayer dashboard provided by the eigenlayer-cli.
 
 ## Avs Task Description
@@ -57,19 +68,24 @@ The architecture of the AVS contains:
 - AVS contracts
   - [ServiceManager](contracts/src/IncredibleSquaringServiceManager.sol) which will eventually contain slashing logic but for M2 is just a placeholder.
   - [TaskManager](contracts/src/IncredibleSquaringTaskManager.sol) which contains [task creation](contracts/src/IncredibleSquaringTaskManager.sol#L83) and [task response](contracts/src/IncredibleSquaringTaskManager.sol#L102) logic.
-  - The [challenge](contracts/src/IncredibleSquaringTaskManager.sol#L176) logic could be separated into its own contract, but we have decided to include it in the TaskManager for this simple task.
+  - The [challenge](contracts/src/IncredibleSquaringTaskManager.sol#L176) logic could be separated into its own contract, but we have decided to include it in the TaskManager for this simple task. It's not implemented in this project
   - Set of [registry contracts](https://github.com/Layr-Labs/eigenlayer-middleware) to manage operators opted in to this avs
 - Task Generator
-  - in a real world scenario, this could be a separate entity, but for this simple demo, the aggregator also acts as the task generator
+  - The generator can be anyone, for this project, it's the React application at the bridge directory
 - Aggregator
   - aggregates BLS signatures from operators and posts the aggregated response to the task manager
   - For this simple demo, the aggregator is not an operator, and thus does not need to register with eigenlayer or the AVS contract. It's IP address is simply hardcoded into the operators' config.
 - Operators
-  - Square the number sent to the task manager by the task generator, sign it, and send it to the aggregator
+  - For mint tasks, they check weather the transaction happened on the BTC network via their local spv node, for burning, they sign the transaction and send it to the aggregator to aggregate those signatures and complete the multisig transfer
 
 ![](./diagrams/architecture.png)
 
-1. A task generator (in our case, same as the aggregator) publishes tasks once every regular interval (say 10 blocks, you are free to set your own interval) to the IncredibleSquaringTaskManager contract's [createNewTask](contracts/src/IncredibleSquaringTaskManager.sol#L83) function. Each task specifies an integer `numberToBeSquared` for which it wants the currently opted-in operators to determine its square `numberToBeSquared^2`. `createNewTask` also takes `quorumNumbers` and `quorumThresholdPercentage` which requests that each listed quorum (we only use quorumNumber 0 in incredible-squaring) needs to reach at least thresholdPercentage of operator signatures.
+## Mint and Burn
+
+For this project, both mint and burn tasks are on the IncredibleSquaringTaskManager contract. 
+
+
+1. A task generator publishes tasks from the app  to the IncredibleSquaringTaskManager contract's [createNewTask](contracts/src/IncredibleSquaringTaskManager.sol#L83) function. Each task specifies a bool `isBurnTask` which specifies what should happen next (emit NewMintTaskCreated or lock GBTC and emmit NewBurnTaskCreated). Apart from that it sends both info for burn and mint tasks, only the info of the other is empty. For mint, the contract uses btcTxHash (hash of the compleated btc transaction) , mintTo(addres of the ETH account that you want the GBTC to be mintet to) ,signedMessage (mintTo signed by the users BTC private key, the one that they have sent the transaction with)
 
 2. A [registry](https://github.com/Layr-Labs/eigenlayer-middleware/blob/master/src/BLSRegistryCoordinatorWithIndices.sol) contract is deployed that allows any eigenlayer operator with at least 1 delegated [mockerc20](contracts/src/ERC20Mock.sol) token to opt-in to this AVS and also de-register from this AVS.
 
@@ -78,12 +94,8 @@ The architecture of the AVS contains:
 4. [Aggregator] The aggregator collects the signatures from the operators and aggregates them using BLS aggregation. If any response passes the [quorumThresholdPercentage](contracts/src/IIncredibleSquaringTaskManager.sol#L36) set by the task generator when posting the task, the aggregator posts the aggregated response to the Task contract.
 
 5. If a response was sent within the [response window](contracts/src/IncredibleSquaringTaskManager.sol#L119), we enter the [Dispute resolution] period.
-   - [Off-chain] A challenge window is launched during which anyone can [raise a dispute](contracts/src/IncredibleSquaringTaskManager.sol#L171) in a DisputeResolution contract (in our case, this is the same as the TaskManager contract)
-   - [On-chain] The DisputeResolution contract resolves that a particular operator’s response is not the correct response (that is, not the square of the integer specified in the task) or the opted-in operator didn’t respond during the response window. If the dispute is resolved, the operator will be frozen in the Registration contract and the veto committee will decide whether to veto the freezing request or not.
+  This functionality is not yet implemented
 
-Below is a more detailed uml diagram of the aggregator and operator processes:
-
-![](./diagrams/uml.png)
 
 ## Avs node spec compliance
 

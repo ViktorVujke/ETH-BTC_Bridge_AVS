@@ -1,25 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-.bridge-form-container {
+.modal-form-container {
   text-align: left;
+  overflow-y: hidden;
 }
 
-.bridge-form-container h2 {
+.modal-form-container h2 {
   font-weight: 700;
   color: #000;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   text-align: center;
 }
 
 .bridge-details {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 15px;
-  font-size: 16px;
+  margin-bottom: 10px;
+  font-size: 14px;
   color: #333;
 }
 
@@ -32,22 +33,53 @@
 }
 
 .bridge-section {
-  margin-bottom: 30px;
+  margin-bottom: 15px;
 }
 
 .bridge-section-header {
-  font-size: 18px;
-  margin-bottom: 10px;
+  font-size: 14px;
+  margin-bottom: 5px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 
+.bridge-section-header .info-icon {
+  margin-left: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #000;
+  position: relative;
+}
+
+.bridge-section-header .info-icon:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 200px;
+  width: 50vw;
+  white-space: normal;
+  background: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 1;
+  visibility: visible;
+  z-index: 10;
+  text-align: left;
+  word-wrap: break-word;
+}
 .bridge-section-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border: 1px solid #ddd;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 10px;
   background: #f9f9f9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease-in-out;
@@ -60,27 +92,27 @@
 .amount-input {
   border: none;
   text-align: right;
-  font-size: 18px;
+  font-size: 20px;
   flex: 1;
   margin: 0 10px;
   background: transparent;
   outline: none;
-  height: 40px;
+  height: 25px;
 }
 
 .connect-wallet-button {
-  background: linear-gradient(90deg, #000, #555);
   color: #fff;
   border: none;
-  border-radius: 16px;
-  padding: 15px;
+  border-radius: 2px;
+  padding: 10px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   text-align: center;
   transition: background 0.3s ease-in-out;
   margin-bottom: 10px;
   display: block;
   width: 100%;
+  font-family:monospace
 }
 
 .connect-wallet-button:hover {
@@ -89,4 +121,18 @@
 
 .cancel-button {
   background: linear-gradient(90deg, #555, #000);
+}
+
+@media (max-width: 768px) {
+  .modal-form-container {
+    padding: 10px;
+  }
+  .bridge-section-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .amount-input {
+    text-align: left;
+    margin-top: 5px;
+  }
 }
