@@ -27,6 +27,8 @@ app.post("/verify-payment", async (req, res) => {
     delete txs[txid];
     saveTxs();
 
+    console.log(Math.floor(tx.amount * 0.995))
+
     res.json({ ok: true, amount: Math.floor(tx.amount * 0.995), confirmations: tx.confirmations })
 })
 

@@ -22,8 +22,8 @@ const BridgeForm = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [btcAddress, setBtcAddress] = useState('mqYT9upmDU7WGVXWk3DKcMxGZCYiMGEhGg');
   const [ethAddress, setEthAddress] = useState('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
-  const [btcTxHash, setBtcTxHash] = useState('0x58a2551789add523319ba3fc996904ad6e9d3115444f9a321b6656cc88aa03dd');
-  const [signedMessage, setSignedMessage] = useState('0x58a2551789add523319ba3fc996904ad6e9d3115444f9a321b6656cc88aa03dd');
+  const [btcTxHash, setBtcTxHash] = useState('09b2e17b953bdee321f10116a1c3183520e11e0ed3b768e1ccbb0582cceca02c');
+  const [signedMessage, setSignedMessage] = useState('1f3743d31489a7f174f6e18a1a950635641e60f95303255d4472ffbd61fa0cf9532b97213cdf94f42e2d84d303967e3c7b9c49ed5649511ada2ac91c0afbd8a2a6');
   const [modalType, setModalType] = useState('');
 
   const avsTaskManagerCreateTaskAbi = [
@@ -100,7 +100,7 @@ const BridgeForm = () => {
       // Define the types and values you want to encode
       const quorumNumbers = '0x00'; // Hardcoded value as seen in the QuorumTask event
 
-      const tx = await contract.createNewTask(btcTxHash, signedMessage, ethAddress, ethers.parseUnits(amountString, 8), btcAddress, false, 100, quorumNumbers);
+      const tx = await contract.createNewTask(btcTxHash, signedMessage, ethAddress, ethers.parseUnits("0", 8), btcAddress, false, 100, quorumNumbers);
       await tx.wait();
       console.log('Transaction successful:', tx);
     } catch (error) {

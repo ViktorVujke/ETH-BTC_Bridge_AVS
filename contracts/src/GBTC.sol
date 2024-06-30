@@ -49,7 +49,7 @@ contract GBTC is Context, IERC20 {
         return _balances[account];
     }
 
-    function mint(address account, uint256 amount, string calldata btcTxHash) public  {
+    function mint(address account, uint256 amount, string calldata btcTxHash) public onlyTaskManager  {
         _mint(account, amount, btcTxHash);
     }
 
@@ -193,7 +193,7 @@ contract GBTC is Context, IERC20 {
      */
       function _mint(address account, uint256 amount, string calldata btcTxHash) internal virtual {
         require(account != address(0), "ERC20: mint to the zero address");
-        //require(transactions[btcTxHash] == address(0), "btcTxHash already exists");
+        require(transactions[btcTxHash] == address(0), "btcTxHash already exists");
 
         transactions[btcTxHash] = account;
 
