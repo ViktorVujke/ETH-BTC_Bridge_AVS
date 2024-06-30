@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.bridge-form-container {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.modal-form-container {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.bridge-form-container:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.bridge-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  font-weight: 700;
+  color: #000;
+}
+
+.bridge-form-header h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.network-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.network-pill {
+  background: #000;
+  border-radius: 50px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.network-pill input[type="radio"] {
+  display: none;
+}
+
+.network-pill label {
+  padding: 10px 20px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.network-pill input[type="radio"]:checked + label {
+  background: #fff;
+  color: #000;
+  border-radius: 50px;
+  transition: background 0.3s ease-in-out;
+}
+
+.bridge-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.bridge-section {
+  margin-bottom: 30px;
+}
+
+.bridge-section-header {
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.bridge-section-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 20px;
+  background: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.bridge-section-content:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.amount-input {
+  border: none;
+  text-align: right;
+  font-size: 24px;
+  flex: 1;
+  margin: 0 10px;
+  background: transparent;
+  outline: none;
+  height: 40px;
+}
+.amount-input2{
+  border: none;
+  text-align: right;
+  font-size: 18px;
+  flex: 1;
+  margin: 0 10px;
+  background: transparent;
+  outline: none;
+  height: 40px;
+}
+.network-currency {
+  font-size: 18px;
+  color: #000;
+  font-weight: 500;
+}
+
+.bridge-arrow {
+  text-align: center;
+  font-size: 30px;
+  margin-bottom: 30px;
+  color: #000;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+.bridge-arrow:hover {
+  transform: rotate(180deg);
+}
+
+.bridge-details {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+  font-size: 16px;
+  color: #888;
+}
+
+.details-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.connect-wallet-button {
+  background: linear-gradient(90deg, #000, #555);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 15px;
+  cursor: pointer;
+  font-size: 18px;
+  text-align: center;
+  transition: background 0.3s ease-in-out;
+}
+
+.connect-wallet-button:hover {
+  background: linear-gradient(90deg, #555, #000);
+}

@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+.modal-form-container {
+  text-align: left;
+  overflow-y: hidden;
+}
+
+.modal-form-container h2 {
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.bridge-details {
+  margin-bottom: 30px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+}
+
+.detail-title {
+  font-weight: 500;
+}
+
+.detail-value {
+  font-weight: 400;
+}
+
+.bridge-section {
+  margin-bottom: 30px;
+}
+
+.bridge-section-header {
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.bridge-section-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  padding: 20px;
+  background: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.bridge-section-content:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.amount-input {
+  border: none;
+  text-align: right;
+  font-size: 18px;
+  flex: 1;
+  margin: 0 10px;
+  background: transparent;
+  outline: none;
+  height: 40px;
+}
+
+.connect-wallet-button {
+  background: linear-gradient(90deg, #000, #555);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 15px;
+  cursor: pointer;
+  font-size: 18px;
+  text-align: center;
+  transition: background 0.3s ease-in-out;
+  margin-bottom: 10px;
+  display: block;
+  width: 100%;
+}
+
+.connect-wallet-button:hover {
+  background: linear-gradient(90deg, #555, #000);
+}
+
+.cancel-button {
+  background: linear-gradient(90deg, #555, #000);
+}
