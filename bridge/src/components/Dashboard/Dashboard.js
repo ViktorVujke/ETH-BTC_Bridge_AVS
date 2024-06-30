@@ -89,7 +89,7 @@ const Dashboard = () => {
           This project aims to provide a trustless, decentralized bridge between Bitcoin and Ethereum networks. By utilizing Eigen Layer and wrapped tokens, it allows for seamless, secure swaps between BTC and GBTC, ensuring that users can leverage the advantages of both blockchains without relying on a central authority.
         </p>
         <p>
-          <a href="https://github.com/your-repo-link" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/ViktorVujke/ETH-BTC_Bridge_AVS" target="_blank" rel="noopener noreferrer">
             View the Code Repository
           </a>
         </p>

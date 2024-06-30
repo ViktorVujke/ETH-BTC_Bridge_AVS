@@ -82,7 +82,7 @@ const BtcGbtcModal = ({
       <div className="modal-form-container">
         <h2>Bridge BTC to GBTC</h2>
         <p className="instructions">
-          Send your Bitcoin to the following address before filling out these fields: <strong>1A2B3C4D5E6F7G8H9I0J</strong>
+          Send your Bitcoin to the following address before filling out these fields: <strong>2N4ZJY7R6FKZsc7SqKw4yZ5eHZo9BP3C7Go</strong>
         </p>
         {loading && <Loader />}
         <div className="bridge-details">
