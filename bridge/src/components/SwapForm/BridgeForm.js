@@ -21,10 +21,29 @@ const BridgeForm = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [btcAddress, setBtcAddress] = useState('mqYT9upmDU7WGVXWk3DKcMxGZCYiMGEhGg');
   const [ethAddress, setEthAddress] = useState('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
-  const [txHash, setTxHash] = useState('0x58a2551789add523319ba3fc996904ad6e9d3115444f9a321b6656cc88aa03dd');
-  const [signedTxHash, setSignedTxHash] = useState('0x58a2551789add523319ba3fc996904ad6e9d3115444f9a321b6656cc88aa03dd');
+  const [btcTxHash, setBtcTxHash] = useState('0x58a2551789add523319ba3fc996904ad6e9d3115444f9a321b6656cc88aa03dd');
+  const [signedMessage, setSignedMessage] = useState('0x58a2551789add523319ba3fc996904ad6e9d3115444f9a321b6656cc88aa03dd');
   const [modalType, setModalType] = useState('');
 
+
+  const avsTaskManagerCreateTaskAbi =  [
+    {
+      "inputs": [
+        { "internalType": "string", "name": "btcTxHash", "type": "string" },
+        { "internalType": "string", "name": "signedMessage", "type": "string" },
+        { "internalType": "address", "name": "mintTo", "type": "address" },
+        { "internalType": "uint256", "name": "burnAmount", "type": "uint256" },
+        { "internalType": "string", "name": "btcDestinationAddress", "type": "string" },
+        { "internalType": "bool", "name": "isBurnTask", "type": "bool" },
+        { "internalType": "uint32", "name": "quorumThresholdPercentage", "type": "uint32" },
+        { "internalType": "bytes", "name": "quorumNumbers", "type": "bytes" }
+      ],
+      "name": "createNewTask",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
   const handleSwap = () => {
     setFromToken(fromToken === 'BTC' ? 'GBTC' : 'BTC');
     setToToken(toToken === 'BTC' ? 'GBTC' : 'BTC');
@@ -89,35 +108,16 @@ const BridgeForm = () => {
     try {
       const provider = new ethers.JsonRpcProvider('http://localhost:8545');
       const walletWithProvider = new ethers.Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', provider);
-      const contractAddress = "0x9E545E3C0baAB3E08CdfD552C960A1050f373042";
-      const contractABI =[
-        {
-          "inputs": [
-            { "internalType": "string", "name": "txHash", "type": "string" },
-            { "internalType": "string", "name": "signedMessage", "type": "string" },
-            { "internalType": "address", "name": "mintTo", "type": "address" },
-            { "internalType": "uint256", "name": "amount", "type": "uint256" },
-            { "internalType": "bool", "name": "isBurnTask", "type": "bool" },
-            { "internalType": "uint32", "name": "quorumThresholdPercentage", "type": "uint32" },
-            { "internalType": "bytes", "name": "quorumNumbers", "type": "bytes" }
-          ],
-          "name": "createNewTask",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
-    
-      const contract = new ethers.Contract(contractAddress, contractABI, walletWithProvider);
+      const contractAddress = "0x9E545E3C0baAB3E08CdfD552C960A1050f373042";   
+      const contract = new ethers.Contract(contractAddress, avsTaskManagerCreateTaskAbi, walletWithProvider);
       
-      const amount = 0;
   
       // Convert the amount to a string before parsing it to units
       const amountString = amount.toString();
       // Define the types and values you want to encode
       const quorumNumbers = '0x00'; // Hardcoded value as seen in the QuorumTask event
 
-      const tx = await contract.createNewTask(txHash, signedTxHash, ethAddress, ethers.parseUnits(amountString, 8), false, 100, quorumNumbers);
+      const tx = await contract.createNewTask(btcTxHash, signedMessage, ethAddress, ethers.parseUnits(amountString, 8), btcAddress, false, 100, quorumNumbers);
       await tx.wait();
       console.log('Transaction successful:', tx);
     } catch (error) {
@@ -131,34 +131,16 @@ const BridgeForm = () => {
       const provider = new ethers.JsonRpcProvider('http://localhost:8545');
       const walletWithProvider = new ethers.Wallet('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', provider);
       const contractAddress = "0x9E545E3C0baAB3E08CdfD552C960A1050f373042";
-      const contractABI =[
-        {
-          "inputs": [
-            { "internalType": "string", "name": "txHash", "type": "string" },
-            { "internalType": "string", "name": "signedMessage", "type": "string" },
-            { "internalType": "address", "name": "mintTo", "type": "address" },
-            { "internalType": "uint256", "name": "amount", "type": "uint256" },
-            { "internalType": "bool", "name": "isBurnTask", "type": "bool" },
-            { "internalType": "uint32", "name": "quorumThresholdPercentage", "type": "uint32" },
-            { "internalType": "bytes", "name": "quorumNumbers", "type": "bytes" }
-          ],
-          "name": "createNewTask",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
     
-      const contract = new ethers.Contract(contractAddress, contractABI, walletWithProvider);
+      const contract = new ethers.Contract(contractAddress, avsTaskManagerCreateTaskAbi, walletWithProvider);
       
-      const amount = 1;
   
       // Convert the amount to a string before parsing it to units
       const amountString = amount.toString();
       // Define the types and values you want to encode
       const quorumNumbers = '0x00'; // Hardcoded value as seen in the QuorumTask event
 
-      const tx = await contract.createNewTask(txHash, signedTxHash, ethAddress, ethers.parseUnits(amountString, 8), true, 100, quorumNumbers);
+      const tx = await contract.createNewTask(btcTxHash, signedMessage, ethAddress, ethers.parseUnits(amountString, 8), btcAddress, true, 100, quorumNumbers);
       await tx.wait();
       console.log('Transaction successful:', tx);
     } catch (error) {
@@ -211,7 +193,7 @@ const BridgeForm = () => {
         <div className="bridge-section">
           <div className="bridge-section-header">To (estimated)</div>
           <div className="bridge-section-content">
-            <input type="number" placeholder="0.0" className="amount-input" readOnly value={amount} />
+            <input type="number" placeholder="0.0" className="amount-input" readOnly value={amount *0.997} />
             <span className="network-currency">{toToken}</span>
           </div>
         </div>
@@ -247,10 +229,10 @@ const BridgeForm = () => {
           fees={fees}
           ethAddress={ethAddress}
           setEthAddress={setEthAddress}
-          txHash={txHash}
-          setTxHash={setTxHash}
-          signedTxHash={signedTxHash}
-          setSignedTxHash={setSignedTxHash}
+          txHash={btcTxHash}
+          setTxHash={setBtcTxHash}
+          signedTxHash={signedMessage}
+          setSignedTxHash={setSignedMessage}
           handleBridge={initiateMintOnAvs}
         />
       )}

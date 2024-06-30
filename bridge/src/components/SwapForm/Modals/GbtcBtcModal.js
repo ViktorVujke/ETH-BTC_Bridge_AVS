@@ -79,7 +79,7 @@ const GbtcBtcModal = ({ modalIsOpen, setModalIsOpen, amount, btcAddress, setBtcA
           </div>
           <div className="detail-row">
             <span className="detail-title">Fee:</span>
-            <span className="detail-value">{fees.toFixed(8)} BTC</span>
+            <span className="detail-value">{(amount*0.05).toFixed(8)} BTC</span>
           </div>
           <div className="bridge-section">
             <div className="bridge-section-header">BTC Address</div>

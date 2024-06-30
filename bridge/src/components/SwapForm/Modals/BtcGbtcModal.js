@@ -97,11 +97,11 @@ const BtcGbtcModal = ({
           </div>
           <div className="detail-row">
             <span className="detail-title">USD Value:</span>
-            <span className="detail-value">{formatUsdValue(usdValue)}</span>
+            <span className="detail-value">{formatUsdValue(usdValue)}$</span>
           </div>
           <div className="detail-row">
             <span className="detail-title">Fee:</span>
-            <span className="detail-value">{fees.toFixed(8)} BTC</span>
+            <span className="detail-value">{(amount*0.005).toFixed(6)} BTC  | {formatUsdValue(usdValue*0.003)}$</span>
           </div>
           <div className="bridge-section">
             <div className="bridge-section-header">ETH Destination Address</div>
