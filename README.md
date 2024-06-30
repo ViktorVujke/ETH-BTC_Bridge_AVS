@@ -29,6 +29,78 @@ Transfer Bitcoin between Etherium and Bitcoin networks, trustlessly (still not p
 
 ## Dependencies
 
+### Bitcoin Nodes setup
+
+> :warning: **Warning:** The full system has only been tested on Windows
+
+In order to test our integration with the Bitcoin blockchain, we have used the Bitcoin Core regtest node, that serves as an initial peer for our SPV Node, which is used to communicate with Bitcoin network. 
+
+#### RegTest Node setup
+
+Firstly, you need to download and install the [Bitcoin Core Client](https://bitcoin.org/en/download). Run it and finish the initial configuration menu. Next, close the Bitcoin Core and modify the `%appdata%/Bitcoin\bitcoin.conf` file (or create it if it does not exist) to have the following content:
+
+```
+regtest=1
+server=1
+rpcuser=yourusername
+rpcpassword=yourpassword
+addresstype=legacy
+changetype=legacy
+txindex=1
+rpcallowip=192.168.1.0/24 # Your local subnet
+peerbloomfilters=1
+
+[main]
+
+[test]
+
+[signet]
+
+[regtest]
+
+rpcbind=0.0.0.0
+```
+
+After you have modified the `bitcoin.conf`, save it, and open Bitcoin Core again. If everything is working fine, the Bitcoin logo should be blue on the loading screen. 
+
+Next, under File/Create Wallet, create a new Bitcoin wallet, and give it a name. Don't select any options and just click Create. 
+
+To get funds on the Bitcoin network, firstly, you will need to locate the location of the Bitcoin Core executable file. Navigate to the daemon folder with cmd, and enter the following command:
+
+```
+bitcoin-cli.exe -rpcwallet=YOUR_WALLET_NAME -generate 200
+```
+
+This will generate 200 blocks and give you some coins to spend. 
+
+Next, using your Bitcoin Core wallet, send some btc (the more the better) to mnJH8EX8efT3ci2myZf9shKbBUaiFaMxmW. Note that you will probably need to manually select the fees. 
+
+Run the following command to confirm that transaction (from Bitcoin Core daemon folder): 
+
+```
+bitcoin-cli.exe -rpcwallet=YOUR_WALLET_NAME -generate 10
+```
+
+Run the `bitcoinScripts/sendMoney.js`. It will fund the hardcoded multisig with 1 BTC, which will give your SPV node (after you set it up) a transaction that you can test. 
+
+#### SPV Node setup
+
+Finally, to set up the SPV node, navigate to the SPV folder in project root, and run the following commands:
+
+```
+git clone https://github.com/bcoin-org/bcoin
+cd bcoin
+npm rebuild
+cd ..
+npm install
+```
+
+Then, you should be able to run the SPV node by `node app.js` inside the SPV folder. 
+
+If everything is successful, you should see your transaction in the `SPV/txs.json` file. 
+
+### Anvil and EL setup
+
 You will need [foundry](https://book.getfoundry.sh/getting-started/installation) and [zap-pretty](https://github.com/maoueh/zap-pretty) and docker to run the examples below.
 ```
 curl -L https://foundry.paradigm.xyz | bash
